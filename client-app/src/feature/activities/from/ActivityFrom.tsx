@@ -1,27 +1,23 @@
-import React, { useState, FormEvent} from 'react'
+import React, { useState, FormEvent, useContext} from 'react'
 import { Segment, Form, Button } from 'semantic-ui-react'
 import { IActivity } from '../../../app/Models/Activity'
 import {v4 as uuid } from 'uuid'
+import ActivityStore from '../../../app/stores/activityStore'
+import { observer } from 'mobx-react-lite'
 
 interface IProps{
-    setEditMode:(editmode:boolean) => void;
     activity :IActivity
-    createActivity:(activity:IActivity | null) => void;
-    EditActivity:(activity:IActivity | null) => void;
-    submitting: boolean;
 }
 
 
-
-export const ActivityFrom: React.FC<IProps> =({
-    setEditMode,
+ const ActivityFrom: React.FC<IProps> =({
     activity : InitialFormState,
-    createActivity,
-    EditActivity,
-    submitting
     })=> {
+    const activityStore = useContext(ActivityStore);
+    const {createActivity,editActivity,submitting,cancelOpenForm} = activityStore;
+
     const intializeForm =() => {
-        if(InitialFormState){
+      if(InitialFormState){
             return InitialFormState
         }
         else
@@ -51,7 +47,7 @@ export const ActivityFrom: React.FC<IProps> =({
         }
         else
         {
-            EditActivity(activity);
+            editActivity(activity);
         }
     }
     const handleInputChange = (event:FormEvent<HTMLInputElement | HTMLTextAreaElement>) =>{
@@ -69,9 +65,15 @@ export const ActivityFrom: React.FC<IProps> =({
                 <Form.Input  onChange={handleInputChange} name='city' placeholder='City' value={activity.city} ></Form.Input>
                 <Form.Input  onChange={handleInputChange} name='venue' placeholder='Venue' value={activity.venue} ></Form.Input>
                 <Button loading={submitting} floated='right' positive type='Submit' content='Submit'></Button> 
-                <Button onClick={()=> setEditMode(false)} floated='right' type='button' content='Cancel'></Button> 
+                <Button 
+                    onClick={cancelOpenForm } 
+                    floated='right' 
+                    type='button' 
+                    content='Cancel' 
+                /> 
             </Form>
         </Segment>
     )
 }
 
+export default observer(ActivityFrom);
