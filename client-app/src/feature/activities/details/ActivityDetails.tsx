@@ -1,9 +1,13 @@
 import React, { useContext, useEffect } from 'react'
-import { Card,Image, Button } from 'semantic-ui-react'
+import { Grid } from 'semantic-ui-react'
 import ActivityStore from '../../../app/stores/activityStore'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps, Link } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { LoadingComponent } from '../../../app/layout/LoadingComponent'
+import { ActivityDetailedInfo } from './ActivityDetailedInfo'
+import { ActivityDetailedChat } from './ActivityDetailedChat'
+import { ActivityDetailedSidebar } from './ActivityDetailedSidebar'
+import ActivityDetailedHeader from './ActivityDetailedHeader'
 
     interface DetailParams{
         id:string;
@@ -24,6 +28,19 @@ import { LoadingComponent } from '../../../app/layout/LoadingComponent'
     if (loadingInitial || !activity) return <LoadingComponent content='Loading activity.......' />
 
     return (
+            <Grid>
+                <Grid.Column width={10}>
+                    <ActivityDetailedHeader activity={activity}/>
+                    <ActivityDetailedInfo activity={activity}/>
+                    <ActivityDetailedChat/>
+                </Grid.Column>
+                <Grid.Column width={6}>
+                    <ActivityDetailedSidebar/>
+                </Grid.Column>
+            </Grid>
+
+
+        /*
             <Card fluid>
             <Image src={`/assets/categoryImages/${activity.category}.jpg`} wrapped ui={false} />
             <Card.Content>
@@ -51,5 +68,7 @@ import { LoadingComponent } from '../../../app/layout/LoadingComponent'
             </Card.Content>
             </Card>
            )
+        */
+    );
     }
     export default observer(ActivityDetails);
