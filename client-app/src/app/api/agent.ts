@@ -1,8 +1,30 @@
 import axios, { AxiosResponse }  from 'axios'
 import { IActivity } from '../Models/Activity';
+import { histrory } from '../..';
+import { toast } from 'react-toastify';
 
 axios.defaults.baseURL= 'http://localhost:5000/api/';
-
+axios.interceptors.response.use(undefined,error=>
+{
+    if(error.message ==='Network Error' && !error.response)
+    {
+        toast.error('Network error - Make sure API is running!')
+    }
+    const {status, data, config} = error.response;
+      if(status === 404)
+      {
+         histrory.push('/Notfound');
+      }
+      if(status === 400 && config.method ==='get' && data.errors.hasOwnProperty('id'))
+      {
+        histrory.push('/Notfound');
+      }
+      if(status === 500)
+      {
+          toast.error('Server error - check the terminal for more info!')
+      }
+      console.log(error.response);
+})
 
 const responseBody =(response:AxiosResponse) =>response.data;
 
@@ -24,6 +46,4 @@ const Activities ={
     delete:(id:string)=>requests.delete(`/activities/${id}`)
 }
 
-export default{
-    Activities
-}
+export default{ Activities }
